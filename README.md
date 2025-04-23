@@ -62,8 +62,7 @@
     <input type="text" id="answer" placeholder="정답 입력" />
     <div class="feedback" id="result"></div>
     <div class="score" id="score"></div>
-    <button onclick="checkAnswer()">제출</button>
-    <button onclick="nextQuestion()">다음</button>
+    <button onclick="resetQuiz()">다시 시작</button>
   </div>
 
   <script>
@@ -137,6 +136,7 @@
     function loadQuestion() {
       document.getElementById('question').innerText = keys[index];
       document.getElementById('answer').value = "";
+      document.getElementById('answer').disabled = false;
       document.getElementById('result').innerText = "";
       document.getElementById('score').innerText = `현재 점수: ${score} / ${keys.length}`;
     }
@@ -153,16 +153,24 @@
         document.getElementById('result').style.color = 'red';
       }
       document.getElementById('score').innerText = `현재 점수: ${score} / ${keys.length}`;
+      document.getElementById('answer').disabled = true;
+      setTimeout(() => nextQuestion(), 3000);
     }
 
     function nextQuestion() {
       index++;
       if (index >= keys.length) {
         document.getElementById('question').innerText = "🎉 모든 문제 완료!";
-        document.getElementById('answer').disabled = true;
         document.getElementById('result').innerText = `총 ${keys.length}문제 중 ${score}개 정답!`;
         return;
       }
+      loadQuestion();
+    }
+
+    function resetQuiz() {
+      index = 0;
+      score = 0;
+      document.getElementById('answer').disabled = false;
       loadQuestion();
     }
 
