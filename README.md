@@ -1,184 +1,224 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>일본어 퀴즈</title>
-  <style>
-    body {
-      background-color: #ccc;
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      padding: 50px;
-    }
-    .card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    h1 {
-      font-size: 2rem;
-      color: #333;
-    }
-    #question {
-      font-size: 1.8rem;
-      margin: 20px 0;
-    }
-    input {
-      font-size: 1.5rem;
-      padding: 10px;
-      width: 80%;
-    }
-    .feedback {
-      margin-top: 20px;
-      font-size: 1.2rem;
-    }
-    .score {
-      margin-top: 10px;
-      font-size: 1rem;
-      color: #333;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-      border-radius: 10px;
-      border: none;
-      background-color: #007BFF;
-      color: white;
-      margin-right: 10px; /* 다시 시작 버튼과 간격 조절 */
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일본어 퀴즈</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 90%;
+            width: 500px;
+        }
+        h1 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        #question {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        input[type="text"] {
+            padding: 12px;
+            font-size: 1.2em;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            width: 80%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #1e7e34;
+        }
+        #result {
+            font-size: 1.2em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #score {
+            font-size: 1em;
+            color: #777;
+            margin-top: 10px;
+        }
+        .feedback.correct {
+            color: green;
+        }
+        .feedback.incorrect {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1>일본어 퀴즈</h1>
-    <div id="question">문제 로딩 중...</div>
-    <input type="text" id="answer" placeholder="정답 입력" />
-    <div class="feedback" id="result"></div>
-    <div class="score" id="score"></div>
-    <button onclick="checkAnswer()">정답 확인</button>
-    <button onclick="resetQuiz()">다시 시작</button>
-  </div>
+    <div class="quiz-container">
+        <h1>일본어 퀴즈</h1>
+        <div id="question">문제 로딩 중...</div>
+        <input type="text" id="answer" placeholder="정답 입력">
+        <div id="result" class="feedback"></div>
+        <div id="score"></div>
+        <button onclick="checkAnswer()">정답 확인</button>
+        <button onclick="nextQuestion()">다음 문제</button>
+        <button onclick="resetQuiz()">다시 시작</button>
+    </div>
 
-  <script>
-    const words = {
-      "갑니다": "이키마스",
-      "합니다": "시마스",
-      "옵니다": "키마스",
-      "봅니다": "미마스",
-      "말합니다": "이이마스",
-      "듣습니다": "키키마스",
-      "씁니다": "카키마스",
-      "읽습니다": "요미마스",
-      "먹습니다": "타베마스",
-      "마십니다": "노미마스",
-      "만납니다": "아이마스",
-      "이야기합니다": "하나시마스",
-      "걷습니다": "아루키마스",
-      "뜁니다": "하시리마스",
-      "잡니다": "네마스",
-      "일어납니다": "오키마스",
-      "만듭니다": "츠쿠리마스",
-      "기다립니다": "마치마스",
-      "섭니다": "타치마스",
-      "앉습니다": "스와리마스",
-      "삽니다": "카이마스",
-      "팝니다": "우리마스",
-      "알려줍니다": "오시에마스",
-      "탑니다": "노리마스",
-      "내립니다": "오리마스",
-      "일합니다": "하타라키마스",
-      "돌아갑니다": "카에리마스",
-      "찍습니다": "토리마스",
-      "시작합니다": "하지메마스",
-      "끝납니다": "오와리마스",
-      "빌려줍니다": "카시마스",
-      "빌립니다": "카리마스",
-      "배웁니다": "나라이마스",
-      "웃습니다": "와라이마스",
-      "웁니다": "나키마스",
-      "화냅니다": "오코리마스",
-      "버립니다": "스테마스",
-      "사용합니다": "츠카이마스",
-      "엽니다": "아케마스",
-      "닫습니다": "시메마스",
-      "자릅니다": "키리마스",
-      "보여줍니다": "미세마스",
-      "노래합니다": "우타이마스",
-      "이깁니다": "카치마스",
-      "집니다": "마케마스",
-      "놉니다": "아소비마스",
-      "듭니다": "모치마스",
-      "쉽니다": "야스미마스",
-      "부릅니다": "요비마스",
-      "움직입니다": "우고키마스",
-      "보냅니다": "오쿠리마스",
-      "생각해냅니다": "오모이다시마스",
-      "정합니다": "키메마스",
-      "입습니다": "키마스",
-      "벗습니다": "누기마스",
-      "신습니다": "하키마스",
-      "대답합니다": "코타에마스",
-      "돕습니다": "테츠다이마스",
-      "찾습니다": "사가시마스",
-      "고칩니다": "나오시마스"
-    };
+    <script>
+        const words = {
+            "갑니다": "いきます",
+            "합니다": "します",
+            "옵니다": "きます",
+            "봅니다": "みます",
+            "말합니다": "いいます",
+            "듣습니다": "ききます",
+            "씁니다": "かきます",
+            "읽습니다": "よみます",
+            "먹습니다": "たべます",
+            "마십니다": "のみます",
+            "만납니다": "あいます",
+            "이야기합니다": "はなします",
+            "걷습니다": "あるきます",
+            "뜁니다": "はしります",
+            "잡니다": "ねます",
+            "일어납니다": "おきます",
+            "만듭니다": "つくります",
+            "기다립니다": "まちます",
+            "섭니다": "たちます",
+            "앉습니다": "すわります",
+            "삽니다": "かいます",
+            "팝니다": "うります",
+            "알려줍니다": "おしえます",
+            "탑니다": "のります",
+            "내립니다": "おります",
+            "일합니다": "はたらきます",
+            "돌아갑니다": "かえります",
+            "찍습니다": "とります",
+            "시작합니다": "はじめます",
+            "끝납니다": "おわります",
+            "빌려줍니다": "かします",
+            "빌립니다": "かります",
+            "배웁니다": "ならいます",
+            "웃습니다": "わらいます",
+            "웁니다": "なきます",
+            "화냅니다": "おこります",
+            "버립니다": "すてます",
+            "사용합니다": "つかいます",
+            "엽니다": "あけます",
+            "닫습니다": "しめます",
+            "자릅니다": "きります",
+            "보여줍니다": "みせます",
+            "노래합니다": "うたいます",
+            "이깁니다": "かちます",
+            "집니다": "まけます",
+            "놉니다": "あそびます",
+            "듭니다": "もちます",
+            "쉽니다": "やすみます",
+            "부릅니다": "よびます",
+            "움직입니다": "うごきます",
+            "보냅니다": "おくります",
+            "생각해냅니다": "おもいだします",
+            "정합니다": "きめます",
+            "입습니다": "きます",
+            "벗습니다": "ぬぎます",
+            "신습니다": "はきます",
+            "대답합니다": "こたえます",
+            "돕습니다": "てつだいます",
+            "찾습니다": "さがします",
+            "고칩니다": "なおします"
+        };
 
-    const keys = Object.keys(words);
-    let index = 0;
-    let score = 0;
+        const keys = Object.keys(words);
+        let index = 0;
+        let score = 0;
+        let answered = false;
 
-    function loadQuestion() {
-      document.getElementById('question').innerText = keys[index];
-      document.getElementById('answer').value = "";
-      document.getElementById('answer').disabled = false;
-      document.getElementById('result').innerText = "";
-      document.getElementById('score').innerText = `현재 점수: ${score} / ${keys.length}`;
-    }
+        const questionElement = document.getElementById('question');
+        const answerInput = document.getElementById('answer');
+        const resultElement = document.getElementById('result');
+        const scoreElement = document.getElementById('score');
+        const nextButton = document.querySelector('button:nth-child(3)');
 
-    function checkAnswer() {
-      const userAnswer = document.getElementById('answer').value.trim();
-      const correct = words[keys[index]];
-      if (userAnswer === correct) {
-        document.getElementById('result').innerText = "✅ 정답입니다!";
-        document.getElementById('result').style.color = 'green';
-        score++;
-      } else {
-        document.getElementById('result').innerText = `❌ 오답입니다. 정답: ${correct}`;
-        document.getElementById('result').style.color = 'red';
-      }
-      document.getElementById('score').innerText = `현재 점수: ${score} / ${keys.length}`;
-      document.getElementById('answer').disabled = true;
-      setTimeout(() => nextQuestion(), 2000); // 2초 후에 다음 문제 로딩
-    }
+        function loadQuestion() {
+            if (index < keys.length) {
+                questionElement.textContent = keys[index];
+                answerInput.value = "";
+                answerInput.disabled = false;
+                answerInput.focus();
+                resultElement.textContent = "";
+                resultElement.className = "feedback";
+                scoreElement.textContent = `현재 점수: ${score} / ${keys.length}`;
+                answered = false;
+                nextButton.disabled = true;
+            } else {
+                questionElement.textContent = "🎉 모든 문제 완료!";
+                answerInput.style.display = "none";
+                resultElement.textContent = `총 ${keys.length}문제 중 ${score}개 정답!`;
+                resultElement.className = "feedback";
+                scoreElement.textContent = `최종 점수: ${Math.round((score / keys.length) * 100)}점`;
+                nextButton.disabled = true;
+            }
+        }
 
-    function nextQuestion() {
-      index++;
-      if (index >= keys.length) {
-        document.getElementById('question').innerText = "🎉 모든 문제 완료!";
-        document.getElementById('result').innerText = `총 ${keys.length}문제 중 ${score}개 정답!`;
-        document.getElementById('answer').style.display = 'none'; // 입력창 숨기기
-        return;
-      }
-      loadQuestion();
-    }
+        function checkAnswer() {
+            if (!answered) {
+                const userAnswer = answerInput.value.trim();
+                const correctAnswer = words[keys[index]];
+                if (userAnswer === correctAnswer) {
+                    resultElement.textContent = "✅ 정답입니다!";
+                    resultElement.className = "feedback correct";
+                    score++;
+                } else {
+                    resultElement.textContent = `❌ 오답입니다. 정답: ${correctAnswer}`;
+                    resultElement.className = "feedback incorrect";
+                }
+                scoreElement.textContent = `현재 점수: ${score} / ${keys.length}`;
+                answerInput.disabled = true;
+                answered = true;
+                nextButton.disabled = false;
+            }
+        }
 
-    function resetQuiz() {
-      index = 0;
-      score = 0;
-      document.getElementById('answer').style.display = 'block'; // 입력창 보이기
-      loadQuestion();
-    }
+        function nextQuestion() {
+            if (answered) {
+                index++;
+                loadQuestion();
+            }
+        }
 
-    // 처음 로딩 시
-    window.onload = loadQuestion;
-  </script>
+        function resetQuiz() {
+            index = 0;
+            score = 0;
+            answerInput.style.display = "block";
+            loadQuestion();
+        }
+
+        // 초기 로딩
+        loadQuestion();
+    </script>
 </body>
 </html>
