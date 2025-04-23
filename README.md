@@ -41,15 +41,15 @@
       color: #333;
     }
     button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 1rem;
-      cursor: pointer;
-      border-radius: 10px;
-      border: none;
-      background-color: #007BFF;
-      color: white;
-    }
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+}
     button:hover {
       background-color: #0056b3;
     }
@@ -62,6 +62,7 @@
     <input type="text" id="answer" placeholder="정답 입력" />
     <div class="feedback" id="result"></div>
     <div class="score" id="score"></div>
+    <button onclick="checkAnswer()">확인</button>
     <button onclick="resetQuiz()">다시 시작</button>
   </div>
 
